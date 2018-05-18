@@ -1,0 +1,75 @@
+This is the first public release of the MFSK/Olivia source code.
+The code version is of April-2006
+
+For questions and comments about the source please write to Pawel.Jalocha@cern.ch
+
+The code is written in C/C++. THe sound input/output is Linux-style.
+
+I worked on this code with Cygwin under Windows but it should compile on Linux too.
+To make the executables you need the GCC compiler and the ncurses library.
+
+This source code is improved compared to the initial release of the
+executables. I worked out a method to decode the forward error correcting
+code which explores its two-dimensional structure. Effectively
+the decoder can go 2-3 dB more into the noise. The decoder provides
+as well a direct measurement of the singal-over-noise ratio
+and this number is displayed in dB by the receiver.
+
+Another improvement is the measurement of the sampling rate mismatch
+- read below for practical instructions.
+
+
+ Quick start instruction:
+==========================
+
+
+1. For those who want to try the mode on the air:
+   type the following command in the directory where you unpacked the sources:
+ $ make
+ $ mfsk_tx --help
+ $ mfsk_rx --help
+ $ mfsk_trx --help
+
+2. For those who want to use the code on their own:
+   look into mfsk_test.cc and mfsk_trx.cc
+
+3. For those who want to measure the performance with HF simulators:
+   look into mfsk_text.cc
+
+
+
+ A notice about the sampling rate of your soundcard
+====================================================
+
+Knowing the sampling rate of your soundcard (both for receive
+and transmit) is vital ! For my laptop I discovered that although
+the receive sampling rate is almost exactly 8000 Hz, on
+transmit it becomes 8100 Hz ! That is a difference of more
+than 1% and MFSK/Olivia will not tolerate this !
+
+
+To help you to find the sampling rate I include here a simple
+program "rate_check" - it measures the sampling rate
+against the real time clock. It is not a very precise
+measurement but it will show major differences like
+mine 8100 Hz instead of 8000 Hz.
+
+Then, the MFSK/Olivia receiver will tell you the difference
+between the smapling rates of your card versus the card
+of y our correspondent. For example if you see on the display
++1000 ppm that means that your sampling rate is 1000 ppm (0.1%)
+higher than you have declared with the -R options (if you did not
+declare anything, the assumption is 8000 Hz). Thus next time
+you run mfsk_trx or mfsk_rx declare a rate increased by 0.1%
+(8008 Hz instead of 8000 Hz) - you will then see much smaller
+rate mismatch.
+
+The measured rate mismatch concerns only your sampling rate
+in the receive mode. For transmit you have to ask a corespondant
+with a well calibrated soundcard.
+
+MFSK/Olivia tolerates rate mismatch up to few hundreds ppm.
+One thousand degrades the performance a little bit, thus
+it is worth correcting.
+
+
